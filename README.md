@@ -2,7 +2,7 @@
 
 A sleek, cyberpunk-themed typing practice application built with React, TypeScript, and Tailwind CSS. Perfect your typing skills with advanced training modes and real-time performance tracking.
 
-![NeoType Screenshot](https://i.ibb.co/KcGFz4Jj/Screenshot-2025-09-22-235752.png](https://i.ibb.co/KcGFz4Jj/Screenshot-2025-09-22-235752.png)) 
+![NeoType Screenshot](https://i.ibb.co/KcGFz4Jj/Screenshot-2025-09-22-235752.png]) 
 
 ## ✨ Features
 
