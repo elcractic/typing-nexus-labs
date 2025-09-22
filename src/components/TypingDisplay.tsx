@@ -27,20 +27,25 @@ export const TypingDisplay = ({
   stats,
   settings,
 }: TypingDisplayProps) => {
-  const displayWords = words.slice(currentWordIndex, currentWordIndex + 20);
+  // Show more words and keep completed ones visible longer
+  const startIndex = Math.max(0, currentWordIndex - 10); // Show 10 previous words
+  const displayWords = words.slice(startIndex, currentWordIndex + 30); // Show 30 upcoming words
   const currentWord = words[currentWordIndex];
 
   const getWordStyle = (index: number, word: string) => {
-    const actualIndex = currentWordIndex + index;
+    const actualIndex = startIndex + index;
     
     if (actualIndex < currentWordIndex) {
-      return "text-success bg-success/10 px-1 rounded"; // Completed words - keep them visible
+      // Completed words - keep them visible with green highlight
+      return "text-success bg-success/20 px-2 py-1 rounded font-medium border border-success/30";
     } else if (actualIndex === currentWordIndex) {
       // Current word - check if it matches current input
       const isCorrect = currentInput.trim() === "" || word.startsWith(currentInput.trim());
-      return isCorrect ? "text-primary bg-primary/20 px-1 rounded border border-primary/30" : "text-destructive bg-destructive/20 px-1 rounded border border-destructive/30";
+      return isCorrect 
+        ? "text-primary bg-primary/30 px-2 py-1 rounded border-2 border-primary/50 font-bold shadow-lg" 
+        : "text-destructive bg-destructive/30 px-2 py-1 rounded border-2 border-destructive/50 font-bold shadow-lg";
     } else {
-      return "text-muted-foreground"; // Upcoming words
+      return "text-muted-foreground hover:text-foreground transition-colors"; // Upcoming words
     }
   };
 
@@ -111,8 +116,8 @@ export const TypingDisplay = ({
             <div className="flex flex-wrap gap-3 justify-center max-w-4xl">
               {displayWords.map((word, index) => (
                 <span
-                  key={currentWordIndex + index}
-                  className={`transition-all duration-200 ${getWordStyle(index, word)}`}
+                  key={startIndex + index}
+                  className={`transition-all duration-300 ${getWordStyle(index, word)}`}
                 >
                   {word}
                 </span>
