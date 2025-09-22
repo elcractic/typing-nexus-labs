@@ -27,19 +27,41 @@ export const TypingDisplay = ({
   stats,
   settings,
 }: TypingDisplayProps) => {
-  // Show more words and keep completed ones visible longer
-  const startIndex = Math.max(0, currentWordIndex - 10); // Show 10 previous words
-  const displayWords = words.slice(startIndex, currentWordIndex + 30); // Show 30 upcoming words
+  const wordsPerLine = 8; // Number of words per line
+  const currentLine = Math.floor(currentWordIndex / wordsPerLine);
+  const currentWordInLine = currentWordIndex % wordsPerLine;
+  
+  // Show current line and next 2 lines
+  const startWordIndex = currentLine * wordsPerLine;
+  const endWordIndex = startWordIndex + (wordsPerLine * 3); // Show 3 lines
+  const displayWords = words.slice(startWordIndex, endWordIndex);
   const currentWord = words[currentWordIndex];
 
-  const getWordStyle = (index: number, word: string) => {
-    const actualIndex = startIndex + index;
-    
-    if (actualIndex < currentWordIndex) {
-      // Completed words - keep them visible with green highlight
-      return "text-success bg-success/20 px-2 py-1 rounded font-medium border border-success/30";
-    } else if (actualIndex === currentWordIndex) {
-      // Current word - check if it matches current input
+  // Group words into lines for display
+  const groupWordsIntoLines = (wordsList: string[], startIdx: number) => {
+    const lines = [];
+    for (let i = 0; i < wordsList.length; i += wordsPerLine) {
+      lines.push({
+        words: wordsList.slice(i, i + wordsPerLine),
+        startIndex: startIdx + i,
+        lineNumber: Math.floor((startIdx + i) / wordsPerLine)
+      });
+    }
+    return lines;
+  };
+
+  const wordLines = groupWordsIntoLines(displayWords, startWordIndex);
+
+  const getWordStyle = (wordIndex: number, word: string, lineNumber: number) => {
+    if (wordIndex < currentWordIndex) {
+      // Completed words - only show if in current line
+      if (lineNumber === currentLine) {
+        return "text-success bg-success/20 px-2 py-1 rounded font-medium border border-success/30";
+      } else {
+        return "opacity-0"; // Hide completed lines
+      }
+    } else if (wordIndex === currentWordIndex) {
+      // Current word
       const isCorrect = currentInput.trim() === "" || word.startsWith(currentInput.trim());
       return isCorrect 
         ? "text-primary bg-primary/30 px-2 py-1 rounded border-2 border-primary/50 font-bold shadow-lg" 
@@ -112,17 +134,27 @@ export const TypingDisplay = ({
       {/* Words Display */}
       <Card className="p-8 neon-glow-strong bg-card/30 backdrop-blur">
         <div className="text-center space-y-6">
-          <div className="text-lg md:text-xl font-mono leading-relaxed tracking-wide min-h-[120px] flex items-center justify-center">
-            <div className="flex flex-wrap gap-3 justify-center max-w-4xl">
-              {displayWords.map((word, index) => (
-                <span
-                  key={startIndex + index}
-                  className={`transition-all duration-300 ${getWordStyle(index, word)}`}
-                >
-                  {word}
-                </span>
-              ))}
-            </div>
+          <div className="text-lg md:text-xl font-mono leading-relaxed tracking-wide min-h-[160px] flex flex-col justify-center space-y-4">
+            {wordLines.map((line, lineIdx) => (
+              <div 
+                key={line.lineNumber}
+                className={`flex gap-3 justify-center transition-all duration-500 ${
+                  line.lineNumber < currentLine ? 'animate-fade-out opacity-0 -translate-y-4' : 'animate-fade-in'
+                }`}
+              >
+                {line.words.map((word, wordIdx) => {
+                  const wordIndex = line.startIndex + wordIdx;
+                  return (
+                    <span
+                      key={wordIndex}
+                      className={`transition-all duration-300 ${getWordStyle(wordIndex, word, line.lineNumber)}`}
+                    >
+                      {word}
+                    </span>
+                  );
+                })}
+              </div>
+            ))}
           </div>
           
           <div className="max-w-md mx-auto">
