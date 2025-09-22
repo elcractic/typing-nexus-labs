@@ -34,11 +34,11 @@ export const TypingDisplay = ({
     const actualIndex = currentWordIndex + index;
     
     if (actualIndex < currentWordIndex) {
-      return "text-success opacity-60"; // Completed words
+      return "text-success bg-success/10 px-1 rounded"; // Completed words - keep them visible
     } else if (actualIndex === currentWordIndex) {
       // Current word - check if it matches current input
       const isCorrect = currentInput.trim() === "" || word.startsWith(currentInput.trim());
-      return isCorrect ? "text-primary bg-primary/10 px-1 rounded" : "text-destructive bg-destructive/10 px-1 rounded";
+      return isCorrect ? "text-primary bg-primary/20 px-1 rounded border border-primary/30" : "text-destructive bg-destructive/20 px-1 rounded border border-destructive/30";
     } else {
       return "text-muted-foreground"; // Upcoming words
     }
