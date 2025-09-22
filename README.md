@@ -151,7 +151,4 @@ Special thanks to:
 - Lucide for the beautiful icon library
 
 ---
-
-**Start your typing journey today and become a keyboard master! 🚀⌨️**
-
-*Built with Lovable - The AI-powered development platform*
+s
